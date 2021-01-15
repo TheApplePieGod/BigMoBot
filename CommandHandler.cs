@@ -339,6 +339,8 @@ namespace BigMoBot
                             }
                         }
 
+                        State.HelloTimerNotified = false;
+
                         if (Break)
                         {
                             var DbUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == UserId).FirstOrDefault();
@@ -373,7 +375,6 @@ namespace BigMoBot
                                 await (Context.Client.GetChannel(Globals.GeneralChannelId) as SocketTextChannel).SendMessageAsync("Failed to update roles.");
                             }
 
-                            State.HelloTimerNotified = false;
                             if (State.AutoCreateNewHello)
                             {
                                 try
