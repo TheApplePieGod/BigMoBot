@@ -21,6 +21,12 @@ namespace BigMoBot
 
         private CommandHandler _handler;
 
+        public Task OnLogAsync(LogMessage msg)
+        {
+            Console.WriteLine(msg);
+            return Task.CompletedTask;
+        }
+
         public async Task StartAsync()
         {
             //Globals.dbContext = new Database.DatabaseContext();
@@ -62,9 +68,11 @@ namespace BigMoBot
 
 			_client = new DiscordSocketClient(new DiscordSocketConfig
             {
-                AlwaysDownloadUsers = true
+                AlwaysDownloadUsers = true,
+                LogLevel = LogSeverity.Info
             });
             //_client = new DiscordSocketClient();
+            _client.Log += OnLogAsync;
 
             var CredentialFile = "BigMoBot.Data.BotCredential.txt";
 
