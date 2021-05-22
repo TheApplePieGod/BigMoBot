@@ -18,6 +18,7 @@ namespace BigMoBot.Modules
         {
             var assembly = Assembly.GetExecutingAssembly();
             var HelpFileName = "BigMoBot.Data.Help.txt";
+            var ChatModeratorHelpFileName = "BigMoBot.Data.HelpChatModerator.txt";
             var AdminHelpFileName = "BigMoBot.Data.HelpAdmin.txt";
             var StatsHelpFileName = "BigMoBot.Data.HelpStats.txt";
             string Footer = "DM <@!755524359753564311> for help, bugs, etc.";
@@ -33,15 +34,21 @@ namespace BigMoBot.Modules
                 embed.AddField("Commands", reader.ReadToEnd());
 
             var GuildUser = Context.Guild.GetUser(Context.User.Id);
+            if (GuildUser.GuildPermissions.ManageMessages) // chat moderator
+            {
+                using (Stream stream = assembly.GetManifestResourceStream(ChatModeratorHelpFileName))
+                using (StreamReader reader = new StreamReader(stream))
+                    embed.AddField("Chat Moderator Commands", reader.ReadToEnd());
+            }
             if (GuildUser.GuildPermissions.Administrator || Globals.AdminUserIds.Contains(Context.Message.Author.Id))
             {
                 using (Stream stream = assembly.GetManifestResourceStream(AdminHelpFileName))
                 using (StreamReader reader = new StreamReader(stream))
-                    embed.AddField("Admin Commands", reader.ReadToEnd());
+                    embed.AddField("Big Mo Admin Commands", reader.ReadToEnd());
 
                 using (Stream stream = assembly.GetManifestResourceStream(StatsHelpFileName))
                 using (StreamReader reader = new StreamReader(stream))
-                    embed.AddField("Stats Commands (Admin)", reader.ReadToEnd());
+                    embed.AddField("Stats Commands (Big Mo Admin)", reader.ReadToEnd());
             }
 
             embed.AddField("Other", Footer);
