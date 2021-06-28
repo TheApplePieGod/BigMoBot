@@ -12,6 +12,8 @@ namespace BigMoBot.Database
     {
         public DatabaseContext() : base()
         {}
+        public DatabaseContext(string ConnectionString) : base()
+        { this.ConnectionString = ConnectionString; }
 
         public DbSet<UserTotalMessages> UserTotalMessagesModel { get; set; }
         public DbSet<UserTotalVoiceTime> UserTotalVoiceTimeModel { get; set; }
@@ -21,6 +23,8 @@ namespace BigMoBot.Database
         public DbSet<HelloMessageCount> HelloMessageCountModel { get; set; }
         public DbSet<IterationCount> IterationCountModel { get; set; }
         public DbSet<ChainBreakCount> ChainBreakCountModel { get; set; }
+
+        private string ConnectionString = "Server=.\\SQLEXPRESS;Database=BigMoBot;Trusted_Connection=True;";
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,16 +41,7 @@ namespace BigMoBot.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-#if (DEBUG)
-            optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=BigMoBot;Trusted_Connection=True;", sso => sso.MaxBatchSize(128));
-#else
-            var assembly = Assembly.GetExecutingAssembly();
-            var DbStringFile = "BigMoBot.Data.DbString.txt";
-
-            using (Stream stream = assembly.GetManifestResourceStream(DbStringFile))
-            using (StreamReader reader = new StreamReader(stream))
-                optionsBuilder.UseSqlServer(reader.ReadToEnd().Trim(), sso => sso.MaxBatchSize(128));
-#endif
+            optionsBuilder.UseSqlServer(ConnectionString, sso => sso.MaxBatchSize(128));
         }
     }
 }
