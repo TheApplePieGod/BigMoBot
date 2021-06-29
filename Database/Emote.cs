@@ -13,7 +13,7 @@ namespace BigMoBot.Database
         [Key]
         public int Id { get; set; }
         [Required]
-        [StringLength(100)]
+        [StringLength(300)]
         public string Link { get; set; }
         [Required]
         [StringLength(25)]
