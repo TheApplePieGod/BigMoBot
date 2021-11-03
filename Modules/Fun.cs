@@ -16,17 +16,46 @@ namespace BigMoBot.Modules
 {
     public class Fun : ModuleBase<SocketCommandContext>
     {
-        private List<string> Greetings = new List<string>();
+        private static List<string> Greetings = new List<string>();
+        private static List<string> BotBoss = new List<string>();
 
         public Fun()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var GreetingsFileName = "BigMoBot.Data.Words.txt";
-            using (Stream stream = assembly.GetManifestResourceStream(GreetingsFileName))
-            using (StreamReader reader = new StreamReader(stream))
+            if (Greetings.Count == 0)
             {
-                string l = "";
-                while ((l = reader.ReadLine()) != null) { Greetings.Add(l); }
+                var GreetingsFileName = "BigMoBot.Data.Words.txt";
+                using (Stream stream = assembly.GetManifestResourceStream(GreetingsFileName))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string l = "";
+                    while ((l = reader.ReadLine()) != null) { Greetings.Add(l); }
+                }
+            }
+            if (BotBoss.Count == 0)
+            {
+                string[] BotBossFileNames = { "BigMoBot.Data.BotBoss1.txt", "BigMoBot.Data.BotBoss2.txt" };
+                for (int i = 0; i < BotBossFileNames.Length; i++)
+                {
+                    using (Stream stream = assembly.GetManifestResourceStream(BotBossFileNames[i]))
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string l = "";
+                        string buffer = "";
+                        while ((l = reader.ReadLine()) != null)
+                        {
+                            if (l.StartsWith("===========")) // end of section
+                            {
+                                BotBoss.Add(buffer);
+                                buffer = "";
+                            }
+                            else
+                                buffer += l + '\n';
+                        }
+                        if (buffer != "")
+                            BotBoss.Add(buffer);
+                    }
+                }
             }
         }
 
@@ -54,6 +83,29 @@ namespace BigMoBot.Modules
             }
 
             await ReplyAsync(Reply);
+        }
+
+        [Command("botboss")]
+        public async Task Task2(int SampleId = -1)
+        {
+            Random ran = new Random();
+
+            int Index = SampleId;
+            if (Index == -1)
+                Index = ran.Next(0, BotBoss.Count);
+            else if (Index >= BotBoss.Count)
+                throw new Exception("Invalid sample ID");
+
+            string Reply = BotBoss[Index];
+
+            var embed = new EmbedBuilder
+            {
+                Title = "BotBoss v1",
+                Description = "Sample #" + Index + "/" + (BotBoss.Count - 1)
+            };
+            embed.AddField("Text", Reply);
+
+            await ReplyAsync(embed: embed.Build());
         }
     }
 }

@@ -1,7 +1,7 @@
 ![Logo](logo_small.png)
 
 # Big Mo
-A discord bot designed to provide activitiy tracking, lightweight server management features, and other various fun features. Started as a fun project for my discord server and evolved to be something more generalized.
+A discord bot designed to provide activity tracking, lightweight server management features, and other various fun features. Started as a fun project for my discord server and evolved to be something more generalized.
 
 ## Why Mo?
 Mo integrates with the fast and powerful SqlServer database platform and has seamless support for multiple discord servers.
