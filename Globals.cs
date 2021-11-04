@@ -24,7 +24,7 @@ namespace BigMoBot
         public static readonly char CommandPrefix = '$';
 #endif
 
-        public static readonly List<string> LoggingIgnoredCommands = new List<string> { CommandPrefix + "greeting" };
+        public static readonly List<string> LoggingIgnoredCommands = new List<string> { CommandPrefix + "greeting", CommandPrefix + "botboss" };
 
         public static async void LogActivity(ulong ClientIdentifier, int ActivityType, string Information, string ResultText, bool Success, int CallingUserId = 0)
         {

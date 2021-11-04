@@ -16,6 +16,7 @@
   <ItemGroup>
     <None Remove="Data\BotBoss1.txt" />
     <None Remove="Data\BotBoss2.txt" />
+    <None Remove="Data\BotBoss3.txt" />
     <None Remove="Data\BotCredential.txt" />
     <None Remove="Data\DbString.txt" />
     <None Remove="Data\Help.txt" />
@@ -34,6 +35,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Data\BotBoss1.txt" />
     <EmbeddedResource Include="Data\BotBoss2.txt" />
+    <EmbeddedResource Include="Data\BotBoss3.txt" />
     <EmbeddedResource Include="Data\BotCredential.txt" />
     <EmbeddedResource Include="Data\Help.txt" />
     <EmbeddedResource Include="Data\HelpChatModerator.txt" />

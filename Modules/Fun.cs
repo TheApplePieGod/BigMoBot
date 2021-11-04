@@ -34,7 +34,7 @@ namespace BigMoBot.Modules
             }
             if (BotBoss.Count == 0)
             {
-                string[] BotBossFileNames = { "BigMoBot.Data.BotBoss1.txt", "BigMoBot.Data.BotBoss2.txt" };
+                string[] BotBossFileNames = { "BigMoBot.Data.BotBoss1.txt", "BigMoBot.Data.BotBoss2.txt", "BigMoBot.Data.BotBoss3.txt" };
                 for (int i = 0; i < BotBossFileNames.Length; i++)
                 {
                     using (Stream stream = assembly.GetManifestResourceStream(BotBossFileNames[i]))
@@ -91,7 +91,7 @@ namespace BigMoBot.Modules
             Random ran = new Random();
 
             int Index = SampleId;
-            if (Index == -1)
+            if (Index < 0)
                 Index = ran.Next(0, BotBoss.Count);
             else if (Index >= BotBoss.Count)
                 throw new Exception("Invalid sample ID");
