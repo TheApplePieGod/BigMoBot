@@ -263,7 +263,7 @@ namespace BigMoBot
                         var VoiceChannels = _client.GetGuild(entry.Key).VoiceChannels;
                         foreach (SocketVoiceChannel Channel in VoiceChannels)
                         {
-                            if (Channel.Users.Count > 0)
+                            if (Channel.ConnectedUsers.Count > 0)
                             {
                                 foreach (SocketGuildUser User in Channel.Users)
                                 {
