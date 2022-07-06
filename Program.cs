@@ -9,6 +9,7 @@ using Discord.Commands;
 using System.Reflection;
 using System.IO;
 using DbUp;
+using Microsoft.Extensions.Configuration;
 
 namespace BigMoBot
 {
@@ -29,23 +30,24 @@ namespace BigMoBot
 
         public async Task StartAsync()
         {
-            //Globals.dbContext = new Database.DatabaseContext();
-            //var d = Globals.dbContext.ChangeTracker;
-
-			_client = new DiscordSocketClient(new DiscordSocketConfig
+            _client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 AlwaysDownloadUsers = true,
                 LogLevel = LogSeverity.Info,
                 GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildMembers
             });
-            //_client = new DiscordSocketClient();
             _client.Log += OnLogAsync;
 
-            var CredentialFile = "BigMoBot.Data.BotCredential.txt";
-            var assembly = Assembly.GetExecutingAssembly();
-            using (Stream stream = assembly.GetManifestResourceStream(CredentialFile))
-            using (StreamReader reader = new StreamReader(stream))
-                await _client.LoginAsync(TokenType.Bot, reader.ReadToEnd().Trim());
+            var Credential = "";
+#if (DEBUG)
+            var CredentialFile = "Debug/BotCredential.txt";
+            using (StreamReader reader = new StreamReader(CredentialFile))
+                Credential = reader.ReadToEnd().Trim();
+#else
+            Credential = Environment.GetEnvironmentVariable("DISCORD_CREDENTIAL");
+#endif
+
+            await _client.LoginAsync(TokenType.Bot, Credential);
             await _client.StartAsync();
 
             _handler = new CommandHandler(_client);
@@ -55,7 +57,3 @@ namespace BigMoBot
         
     }
 }
-
-
-// When adding new sections to the player file, make sure to check everything, including modules
-// alt is 257573869840367616

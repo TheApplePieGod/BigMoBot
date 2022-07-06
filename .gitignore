@@ -16,6 +16,7 @@ ScaffoldDboLocal.ps1
 Data/*
 !Data/Help*
 !Data/New.txt
+Debug/*
 *.user
 *.sln
 
