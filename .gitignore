@@ -13,11 +13,9 @@ obj/*
 Properties/*
 ScaffoldDbo.ps1
 ScaffoldDboLocal.ps1
-Data/BotCredential.txt
-Data/DbString.txt
-Data/Words.txt
-Data/BotBoss*
-Data/WalkingMoon.mp3
+Data/*
+!Data/Help*
+!Data/New.txt
 *.user
 *.sln
 
