@@ -29,7 +29,7 @@ namespace BigMoBot.Modules
             Operation = Operation.ToLower();
             if (Operation == "add")
             {
-                if (!GuildUser.GuildPermissions.ManageEmojis && !Globals.AdminUserIds.Contains(Context.Message.Author.Id))
+                if (!GuildUser.GuildPermissions.ManageEmojisAndStickers && !Globals.AdminUserIds.Contains(Context.Message.Author.Id))
                     throw new Exception("You do not have permission to run that command");
 
                 if (Name == "")
@@ -71,7 +71,7 @@ namespace BigMoBot.Modules
             }
             else if (Operation == "remove")
             {
-                if (!GuildUser.GuildPermissions.ManageEmojis && !Globals.AdminUserIds.Contains(Context.Message.Author.Id))
+                if (!GuildUser.GuildPermissions.ManageEmojisAndStickers && !Globals.AdminUserIds.Contains(Context.Message.Author.Id))
                     throw new Exception("You do not have permission to run that command");
 
                 if (Name == "")

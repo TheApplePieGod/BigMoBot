@@ -35,7 +35,8 @@ namespace BigMoBot
 			_client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 AlwaysDownloadUsers = true,
-                LogLevel = LogSeverity.Info
+                LogLevel = LogSeverity.Info,
+                GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildMembers
             });
             //_client = new DiscordSocketClient();
             _client.Log += OnLogAsync;
