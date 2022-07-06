@@ -24,7 +24,7 @@ namespace BigMoBot.Database
         public DbSet<IterationCount> IterationCountModel { get; set; }
         public DbSet<ChainBreakCount> ChainBreakCountModel { get; set; }
 
-        private string ConnectionString = "Server=.\\SQLEXPRESS;Database=BigMoBot;Trusted_Connection=True;";
+        private string ConnectionString = "";
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

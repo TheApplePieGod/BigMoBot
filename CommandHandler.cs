@@ -49,12 +49,12 @@ namespace BigMoBot
             _client.Ready += Ready;
         }
 
-        public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> Message, ISocketMessageChannel Channel, SocketReaction Reaction)
+        public async Task OnReactionAdded(Cacheable<IUserMessage, ulong> Message, Cacheable<IMessageChannel, ulong> Channel, SocketReaction Reaction)
         {
             if (!Reaction.User.IsSpecified || Reaction.User.Value.IsBot)
                 return;
 
-            var GuildChannel = Channel as SocketGuildChannel;
+            var GuildChannel = (await Channel.GetOrDownloadAsync()) as SocketGuildChannel;
             if (GuildChannel.Guild == null)
                 return;
 
@@ -79,12 +79,12 @@ namespace BigMoBot
             }
         }
 
-        public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> Message, ISocketMessageChannel Channel, SocketReaction Reaction)
+        public async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> Message, Cacheable<IMessageChannel, ulong> Channel, SocketReaction Reaction)
         {
             if (!Reaction.User.IsSpecified || Reaction.User.Value.IsBot)
                 return;
 
-            var GuildChannel = Channel as SocketGuildChannel;
+            var GuildChannel = (await Channel.GetOrDownloadAsync()) as SocketGuildChannel;
             if (GuildChannel.Guild == null)
                 return;
 
@@ -109,19 +109,19 @@ namespace BigMoBot
             }
         }
 
-        public async Task OnMessageDeleted(Cacheable<IMessage, ulong> Message, ISocketMessageChannel Channel)
+        public async Task OnMessageDeleted(Cacheable<IMessage, ulong> Message, Cacheable<IMessageChannel, ulong> Channel)
         {
-            var GuildChannel = Channel as SocketGuildChannel;
-            if (GuildChannel.Guild != null)
-            {
-                var dbContext = await DbHelper.GetDbContext(GuildChannel.Guild.Id);
+            var GuildChannel = (await Channel.GetOrDownloadAsync()) as SocketGuildChannel;
+            if (GuildChannel.Guild == null)
+                return;
 
-                var FoundMessage = await dbContext.ReactionRoles.AsAsyncEnumerable().Where(e => e.MessageId.ToInt64() == Message.Id).FirstOrDefaultAsync();
-                if (FoundMessage != null)
-                {
-                    FoundMessage.Deleted = true;
-                    await dbContext.SaveChangesAsync();
-                }
+            var dbContext = await DbHelper.GetDbContext(GuildChannel.Guild.Id);
+
+            var FoundMessage = await dbContext.ReactionRoles.AsAsyncEnumerable().Where(e => e.MessageId.ToInt64() == Message.Id).FirstOrDefaultAsync();
+            if (FoundMessage != null)
+            {
+                FoundMessage.Deleted = true;
+                await dbContext.SaveChangesAsync();
             }
         }
 
@@ -263,9 +263,9 @@ namespace BigMoBot
                         var VoiceChannels = _client.GetGuild(entry.Key).VoiceChannels;
                         foreach (SocketVoiceChannel Channel in VoiceChannels)
                         {
-                            if (Channel.Users.Count > 0)
+                            if (Channel.ConnectedUsers.Count > 0)
                             {
-                                foreach (SocketGuildUser User in Channel.Users)
+                                foreach (SocketGuildUser User in Channel.ConnectedUsers)
                                 {
                                     if (!User.IsBot && !User.IsSelfMuted && !User.IsSelfDeafened && !User.IsMuted && !User.IsDeafened)
                                     {
