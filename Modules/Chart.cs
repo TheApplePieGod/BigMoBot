@@ -37,14 +37,8 @@ namespace BigMoBot.Modules
                     throw new ArgumentException("Must mention at least one user");
                 if (MentionedUserStrings.Length > 5)
                     throw new ArgumentException("Cannot chart more than five users at a time");
-
-                // 0 weeks = all time
-                if (NumWeeks == 0)
-                {
-                    DateTime ThisWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
-                    DateTime DataStart = DateTime.Parse("2020-11-30 00:00:00.000");
-                    NumWeeks = ((ThisWeek - DataStart).Days / 7) + 1;
-                }
+                if (NumWeeks <= 0)
+                    throw new ArgumentException("Must chart more than zero weeks");
 
                 DateTime StartingWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday).AddDays(-7 * (NumWeeks - 1));
                 string Labels = "[";
