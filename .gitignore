@@ -16,6 +16,7 @@ ScaffoldDboLocal.ps1
 Data/BotCredential.txt
 Data/DbString.txt
 Data/Words.txt
+Data/BotBoss*
 Data/WalkingMoon.mp3
 *.user
 *.sln
