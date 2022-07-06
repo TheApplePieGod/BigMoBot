@@ -28,23 +28,23 @@ namespace BigMoBot
             }
             else
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                string BaseConnectionString = "Server=.\\SQLEXPRESS;Database=BigMoBot;Trusted_Connection=True;";
-#if (!DEBUG)
-                var DbStringFile = "BigMoBot.Data.DbString.txt";
-                using (Stream stream = assembly.GetManifestResourceStream(DbStringFile))
-                using (StreamReader reader = new StreamReader(stream))
-                    BaseConnectionString = reader.ReadToEnd().Trim();
+                string ConnectionString = "";
+#if (DEBUG)
+                var DbStringFile = "Debug/DbString.txt";
+                using (StreamReader reader = new StreamReader(DbStringFile))
+                    ConnectionString = reader.ReadToEnd().Trim();
+#else
+                ConnectionString = Environment.GetEnvironmentVariable("MYSQL_STRING");
 #endif
 
-                string ConnectionString = BaseConnectionString.Replace("BigMoBot", "BigMoBot_" + ClientIdentifier);
+                ConnectionString = ConnectionString.Replace("BigMoBot", "BigMoBot_" + ClientIdentifier);
                 var NewContext = new Database.DatabaseContext(ConnectionString);
-                //await NewContext.Database.EnsureCreatedAsync();
 
                 // DBUP
                 EnsureDatabase.For.SqlDatabase(ConnectionString);
                 Task.Delay(1000).Wait();
 
+                var assembly = Assembly.GetExecutingAssembly();
                 var upgradeEngine = DeployChanges.To
                     .SqlDatabase(ConnectionString)
                     .WithScriptsAndCodeEmbeddedInAssembly(assembly, (string s) => s.StartsWith("BigMoBot.Migrations.Script"))
