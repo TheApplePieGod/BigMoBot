@@ -20,6 +20,5 @@
 [$reportchart (num weeks) (@user1) (@user2) ...]
 - Displays a visualization of the mentioned users' activity history
 - 1-5 users may be requested at a time
-- Specify 0 for 'num weeks' for an all time chart
 - Please do not spam this command
 ```

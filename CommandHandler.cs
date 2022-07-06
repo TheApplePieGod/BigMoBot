@@ -265,7 +265,7 @@ namespace BigMoBot
                         {
                             if (Channel.ConnectedUsers.Count > 0)
                             {
-                                foreach (SocketGuildUser User in Channel.Users)
+                                foreach (SocketGuildUser User in Channel.ConnectedUsers)
                                 {
                                     if (!User.IsBot && !User.IsSelfMuted && !User.IsSelfDeafened && !User.IsMuted && !User.IsDeafened)
                                     {

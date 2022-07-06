@@ -71,7 +71,7 @@ namespace BigMoBot.Modules
                 else if (TotalSecondsInVoice == 0)
                     WeightedAverage = MessageAverage * 100;
                 else
-                    WeightedAverage = ((MessageAverage * 0.6) + (VoiceAverage * 0.4)) / 1 * 100;
+                    WeightedAverage = ((MessageAverage * 0.6) + (VoiceAverage * 0.4)) * 100;
 
                 UserPercent Output = new UserPercent();
                 Output.UserName = Stat.UserName.Replace("/", "").Replace("\\", "");
