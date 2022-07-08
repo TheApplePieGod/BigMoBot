@@ -31,7 +31,7 @@ namespace BigMoBot.Modules
 
                 if (AppState.SuppressedRoleId != null && AppState.SuppressedRoleId.Length > 0)
                 {
-                    int UserId = await Globals.GetDbUserId(Context.Guild.Id, User);
+                    int UserId = await Util.GetDbUserId(Context.Guild.Id, User);
                     var SuppressedUserRow = await dbContext.SupressedUsers.Where(u => u.UserId == UserId).FirstOrDefaultAsync();
 
                     if (SuppressedUserRow != null)
@@ -45,8 +45,8 @@ namespace BigMoBot.Modules
                     //await Context.Message.DeleteAsync();
                     await ReplyAsync("<@!" + User.Id + "> has been unmuted.");
 
-                    int CallingUserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
-                    Globals.LogActivity(Context.Guild.Id, 2, "", User.Username + " has been unmuted.", true, CallingUserId);
+                    int CallingUserId = await Util.GetDbUserId(Context.Guild.Id, Context.Message.Author);
+                    Util.LogActivity(Context.Guild.Id, 2, "", User.Username + " has been unmuted.", true, CallingUserId);
                 }
                 else
                     await ReplyAsync("This feature has not been set up yet");

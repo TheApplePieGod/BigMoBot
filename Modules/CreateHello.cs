@@ -26,7 +26,7 @@ namespace BigMoBot.Modules
                 if (!AppState.EnableHelloChain)
                     throw new Exception("The [Hello Chain] feature is not enabled");
 
-                int CallingUserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
+                int CallingUserId = await Util.GetDbUserId(Context.Guild.Id, Context.Message.Author);
                 var ResponseChannel = Context.Guild.DefaultChannel;
                 if (AppState.ResponseChannelId != null && AppState.ResponseChannelId.Length > 0)
                     ResponseChannel = Context.Client.GetChannel(AppState.ResponseChannelId.ToInt64()) as SocketTextChannel;
@@ -46,16 +46,16 @@ namespace BigMoBot.Modules
                                 x.CategoryId = AppState.HelloCategoryId.ToInt64();
                             x.Topic = AppState.HelloTopic;
                         });
-                        AppState.HelloChannelId = await Globals.GetDbChannelId(Context.Guild.Id, NewChannel.Id, NewChannel.Name, 2);
+                        AppState.HelloChannelId = await Util.GetDbChannelId(Context.Guild.Id, NewChannel.Id, NewChannel.Name, 2);
                         AppState.HelloDeleted = false;
                         AppState.LastHelloMessage = DateTime.Now;
                         AppState.LastHelloUserId = 0;
-                        Globals.SetSuspendedUser(ResponseChannel, 0, Context.Guild, Context.Client);
-                        Globals.LogActivity(Context.Guild.Id, 5, "From command", "Iteration: " + AppState.HelloIteration, true, CallingUserId);
+                        Util.SetSuspendedUser(ResponseChannel, 0, Context.Guild, Context.Client);
+                        Util.LogActivity(Context.Guild.Id, 5, "From command", "Iteration: " + AppState.HelloIteration, true, CallingUserId);
                     }
                     catch (Exception e)
                     {
-                        Globals.LogActivity(Context.Guild.Id, 5, "From command", "Iteration: " + AppState.HelloIteration + " Error: " + e.Message, false, CallingUserId);
+                        Util.LogActivity(Context.Guild.Id, 5, "From command", "Iteration: " + AppState.HelloIteration + " Error: " + e.Message, false, CallingUserId);
                         await ReplyAsync("Operation failed: " + e.Message);
                         throw new Exception("Operation failed: " + e.Message);
                     }
@@ -64,7 +64,7 @@ namespace BigMoBot.Modules
                     //await Context.Message.DeleteAsync();
                     await ReplyAsync("Successfully created channel <#" + NewChannel.Id + ">");
 
-                    Globals.LogActivity(Context.Guild.Id, 7, "", "Successfully reset channel to " + NewChannel.Name, true, CallingUserId);
+                    Util.LogActivity(Context.Guild.Id, 7, "", "Successfully reset channel to " + NewChannel.Name, true, CallingUserId);
                 }
             }
         }

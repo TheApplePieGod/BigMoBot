@@ -132,7 +132,7 @@ namespace BigMoBot
 
             if (AppState.JoinMuteMinutes > 0 && AppState.SuppressedRoleId != null && AppState.SuppressedRoleId.Length > 0)
             {
-                int UserId = await Globals.GetDbUserId(User.Guild.Id, User);
+                int UserId = await Util.GetDbUserId(User.Guild.Id, User);
                 var SuppressedUserRow = await dbContext.SupressedUsers.Where(u => u.UserId == UserId).FirstOrDefaultAsync();
 
                 if (SuppressedUserRow == null)
@@ -230,11 +230,11 @@ namespace BigMoBot
 
                                 await dbContext.SaveChangesAsync();
 
-                                Globals.AwardChainKeeper(ResponseChannel, AppState.HelloIteration, 0, _client.GetGuild(entry.Key), _client);
+                                Util.AwardChainKeeper(ResponseChannel, AppState.HelloIteration, 0, _client.GetGuild(entry.Key), _client);
 
-                                Globals.LogActivity(entry.Key, 4, "Surpassed 12 hours", "", true);
+                                Util.LogActivity(entry.Key, 4, "Surpassed 12 hours", "", true);
                             }
-                            catch (Exception e) { Globals.LogActivity(entry.Key, 4, "Surpassed 12 hours", e.Message, false); }
+                            catch (Exception e) { Util.LogActivity(entry.Key, 4, "Surpassed 12 hours", e.Message, false); }
                         }
                         else if (!AppState.HelloTimerNotified.Value && TimeDifference.TotalHours >= 11)
                         {
@@ -245,7 +245,7 @@ namespace BigMoBot
                         }
                     }
                 }
-                catch (Exception e) { Globals.LogActivity(entry.Key, 1, "HelloChainTimerUpdate", e.Message, false); }
+                catch (Exception e) { Util.LogActivity(entry.Key, 1, "HelloChainTimerUpdate", e.Message, false); }
             }
         }
 
@@ -270,8 +270,8 @@ namespace BigMoBot
                                     if (!User.IsBot && !User.IsSelfMuted && !User.IsSelfDeafened && !User.IsMuted && !User.IsDeafened)
                                     {
                                         DateTime CurrentWeekDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
-                                        int UserId = await Globals.GetDbUserId(entry.Key, User);
-                                        int ChannelId = await Globals.GetDbChannelId(Channel);
+                                        int UserId = await Util.GetDbUserId(entry.Key, User);
+                                        int ChannelId = await Util.GetDbChannelId(Channel);
                                         var VoiceStatisticsRow = await dbContext.VoiceStatistics.Where(u => u.UserId == UserId && u.ChannelId == ChannelId && u.TimePeriod == CurrentWeekDate).FirstOrDefaultAsync();
 
                                         if (VoiceStatisticsRow == null)
@@ -316,16 +316,16 @@ namespace BigMoBot
                                     else
                                         await Guild.DefaultChannel.SendMessageAsync("<@!" + DiscordId + "> has been unmuted");
                                     dbContext.SupressedUsers.Remove(SuppressedUser);
-                                    Globals.LogActivity(entry.Key, 2, User.DiscordUserName, "", true);
+                                    Util.LogActivity(entry.Key, 2, User.DiscordUserName, "", true);
                                 }
-                                catch (Exception e) { Globals.LogActivity(entry.Key, 2, User.DiscordUserName, e.Message, false); }
+                                catch (Exception e) { Util.LogActivity(entry.Key, 2, User.DiscordUserName, e.Message, false); }
                             }
                         }
                     }
 
                     await dbContext.SaveChangesAsync();
                 }
-                catch (Exception e) { Globals.LogActivity(entry.Key, 1, "GenericTimedUpdate", e.Message, false); }
+                catch (Exception e) { Util.LogActivity(entry.Key, 1, "GenericTimedUpdate", e.Message, false); }
             }
         }
 
@@ -346,8 +346,8 @@ namespace BigMoBot
             {
                 DateTime CurrentWeekDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-                int UserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
-                int ChannelId = await Globals.GetDbChannelId(Context.Guild.GetChannel(Context.Channel.Id)); // context.channel should always be in a guild here
+                int UserId = await Util.GetDbUserId(Context.Guild.Id, Context.Message.Author);
+                int ChannelId = await Util.GetDbChannelId(Context.Guild.GetChannel(Context.Channel.Id)); // context.channel should always be in a guild here
                 var MessageStatisticsRow = await dbContext.MessageStatistics.Where(u => u.UserId == UserId && u.ChannelId == ChannelId && u.TimePeriod == CurrentWeekDate).FirstOrDefaultAsync();
 
                 if (MessageStatisticsRow == null)
@@ -368,7 +368,7 @@ namespace BigMoBot
 
                 await dbContext.SaveChangesAsync();
             }
-            catch (Exception e) { Globals.LogActivity(Context.Guild.Id, 1, "UpdateSentMessages", e.Message, false); }
+            catch (Exception e) { Util.LogActivity(Context.Guild.Id, 1, "UpdateSentMessages", e.Message, false); }
         }
 
         public async Task UpdateHelloChain(SocketCommandContext Context, Database.AppState State)
@@ -381,7 +381,7 @@ namespace BigMoBot
                     var dbChannel = await dbContext.Channels.Where(c => c.Id == State.HelloChannelId).FirstOrDefaultAsync(); // todo: change back to id instead of channel reference for performance?
                     if (Context.Message.Channel.Id == dbChannel.DiscordChannelId.ToInt64())
                     {
-                        int UserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
+                        int UserId = await Util.GetDbUserId(Context.Guild.Id, Context.Message.Author);
                         bool Break = false;
                         string Reason = "";
                         if (State.LastHelloUserId == UserId)
@@ -453,18 +453,18 @@ namespace BigMoBot
                             {
                                 DeleteHelloChannel(ResponseChannel, "<@!" + DbUser.DiscordUserId.ToInt64() + "> " + Reason + Result, dbChannel.DiscordChannelId.ToInt64());
                                 dbChannel.Deleted = true;
-                                Globals.LogActivity(Context.Guild.Id, 4, BreakerUser.Username + " " + Reason, "Iteration: " + State.HelloIteration + ", Message: " + Context.Message.Content, true);
+                                Util.LogActivity(Context.Guild.Id, 4, BreakerUser.Username + " " + Reason, "Iteration: " + State.HelloIteration + ", Message: " + Context.Message.Content, true);
                             }
-                            catch (Exception e) { Globals.LogActivity(Context.Guild.Id, 4, BreakerUser.Username + " " + Reason, "Iteration: " + State.HelloIteration + " Error: " + e.Message, false); }
+                            catch (Exception e) { Util.LogActivity(Context.Guild.Id, 4, BreakerUser.Username + " " + Reason, "Iteration: " + State.HelloIteration + " Error: " + e.Message, false); }
 
                             try
                             {
-                                Globals.AwardChainKeeper(ResponseChannel, State.HelloIteration, UserId, Context.Guild, Context.Client);
-                                Globals.SetSuspendedUser(ResponseChannel, UserId, Context.Guild, Context.Client);
+                                Util.AwardChainKeeper(ResponseChannel, State.HelloIteration, UserId, Context.Guild, Context.Client);
+                                Util.SetSuspendedUser(ResponseChannel, UserId, Context.Guild, Context.Client);
                             }
                             catch (Exception e)
                             {
-                                Globals.LogActivity(Context.Guild.Id, 1, "Automatic: Failed updating roles after break", "Error: " + e.Message, false);
+                                Util.LogActivity(Context.Guild.Id, 1, "Automatic: Failed updating roles after break", "Error: " + e.Message, false);
                                 await ResponseChannel.SendMessageAsync("Failed to update roles.");
                             }
 
@@ -479,13 +479,13 @@ namespace BigMoBot
                                             x.CategoryId = State.HelloCategoryId.ToInt64();
                                         x.Topic = State.HelloTopic;
                                     });
-                                    State.HelloChannelId = await Globals.GetDbChannelId(Context.Guild.Id, NewChannel.Id, NewChannel.Name, 2);
+                                    State.HelloChannelId = await Util.GetDbChannelId(Context.Guild.Id, NewChannel.Id, NewChannel.Name, 2);
                                     State.HelloDeleted = false;
                                     State.LastHelloUserId = 0;
                                     State.LastHelloMessage = DateTime.Now;
-                                    Globals.LogActivity(Context.Guild.Id, 5, "Automatic: " + BreakerUser.Username + " " + Reason, NewChannel.Name, true);
+                                    Util.LogActivity(Context.Guild.Id, 5, "Automatic: " + BreakerUser.Username + " " + Reason, NewChannel.Name, true);
                                 }
-                                catch (Exception e) { Globals.LogActivity(Context.Guild.Id, 5, "Automatic: " + BreakerUser.Username + " " + Reason, "Iteration: " + State.HelloIteration + " Error: " + e.Message, false); }
+                                catch (Exception e) { Util.LogActivity(Context.Guild.Id, 5, "Automatic: " + BreakerUser.Username + " " + Reason, "Iteration: " + State.HelloIteration + " Error: " + e.Message, false); }
                             }
                             else
                                 State.HelloDeleted = true;
@@ -500,7 +500,7 @@ namespace BigMoBot
                     }
                 }
             }
-            catch (Exception e) { Globals.LogActivity(Context.Guild.Id, 1, "UpdateHelloChain", e.Message, false); }
+            catch (Exception e) { Util.LogActivity(Context.Guild.Id, 1, "UpdateHelloChain", e.Message, false); }
         }
 
         ulong PickWinner(ulong id1, ulong id2, int input1, int input2)
@@ -559,7 +559,7 @@ namespace BigMoBot
 
                         if (msg.HasCharPrefix(Globals.CommandPrefix, ref argPos))
                         {
-                            int UserId = await Globals.GetDbUserId(context.Guild.Id, msg.Author);
+                            int UserId = await Util.GetDbUserId(context.Guild.Id, msg.Author);
                             var result = await _commands.ExecuteAsync(context, argPos, null);
 
                             if (!result.IsSuccess)
@@ -567,7 +567,7 @@ namespace BigMoBot
                                 if (result.Error != CommandError.UnknownCommand)
                                 {
                                     await context.Channel.SendMessageAsync(result.ErrorReason);
-                                    Globals.LogActivity(context.Guild.Id, 6, msg.Content, result.ErrorReason, false, UserId);
+                                    Util.LogActivity(context.Guild.Id, 6, msg.Content, result.ErrorReason, false, UserId);
                                 }
                                 else
                                 {
@@ -609,19 +609,19 @@ namespace BigMoBot
                                         }
 
                                         if (FoundCommand)
-                                            Globals.LogActivity(context.Guild.Id, 6, msg.Content, "", FoundCommand, UserId);
+                                            Util.LogActivity(context.Guild.Id, 6, msg.Content, "", FoundCommand, UserId);
                                         //else
                                         //    await context.Channel.SendMessageAsync("Unknown command");
                                     }
                                     catch (Exception e)
                                     {
-                                        Globals.LogActivity(context.Guild.Id, 6, msg.Content, e.Message, false, UserId);
+                                        Util.LogActivity(context.Guild.Id, 6, msg.Content, e.Message, false, UserId);
                                         await context.Channel.SendMessageAsync("Operation failed: " + e.Message);
                                     }
                                 }
                             }
                             else
-                                Globals.LogActivity(context.Guild.Id, 6, msg.Content, "", true, UserId);
+                                Util.LogActivity(context.Guild.Id, 6, msg.Content, "", true, UserId);
                         }
                     }
                     else
@@ -717,7 +717,7 @@ namespace BigMoBot
                                 }
                             }
                         }
-                        catch (Exception e) { /*Globals.LogActivity(1, "Processing DM", "Message: " + msg.Content + " Error: " + e.Message, false, UserId);*/ }
+                        catch (Exception e) { /*Util.LogActivity(1, "Processing DM", "Message: " + msg.Content + " Error: " + e.Message, false, UserId);*/ }
                         // dm logging disabled for now because there is no 'central' db to store this log in
                     }
                 }

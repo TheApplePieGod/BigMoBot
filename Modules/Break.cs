@@ -43,7 +43,7 @@ namespace BigMoBot.Modules
                 var ResponseChannel = Context.Guild.DefaultChannel;
                 if (AppState.ResponseChannelId != null && AppState.ResponseChannelId.Length > 0)
                     ResponseChannel = Context.Client.GetChannel(AppState.ResponseChannelId.ToInt64()) as SocketTextChannel;
-                int CallingUserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
+                int CallingUserId = await Util.GetDbUserId(Context.Guild.Id, Context.Message.Author);
 
                 try
                 {
@@ -51,27 +51,27 @@ namespace BigMoBot.Modules
                     var HelloChannel = Context.Client.GetChannel(dbChannel.DiscordChannelId.ToInt64()) as SocketTextChannel;
                     await HelloChannel.DeleteAsync();
                     dbChannel.Deleted = true;
-                    Globals.LogActivity(Context.Guild.Id, 4, "From command", "Iteration: " + AppState.HelloIteration, true, CallingUserId);
+                    Util.LogActivity(Context.Guild.Id, 4, "From command", "Iteration: " + AppState.HelloIteration, true, CallingUserId);
                 }
                 catch (Exception e)
                 {
-                    Globals.LogActivity(Context.Guild.Id, 4, "From command", "Iteration: " + AppState.HelloIteration + " Error: " + e.Message, false, CallingUserId);
+                    Util.LogActivity(Context.Guild.Id, 4, "From command", "Iteration: " + AppState.HelloIteration + " Error: " + e.Message, false, CallingUserId);
                     await ReplyAsync("Operation failed: " + e.Message);
                     throw new Exception("Operation failed: " + e.Message);
                 }
 
-                int dbUserId = await Globals.GetDbUserId(Context.Guild.Id, User);
+                int dbUserId = await Util.GetDbUserId(Context.Guild.Id, User);
                 var dbUser = await dbContext.Users.Where(u => u.Id == dbUserId).FirstOrDefaultAsync();
                 dbUser.ChainBreaks = dbUser.ChainBreaks + 1;
 
                 try
                 {
-                    Globals.AwardChainKeeper(ResponseChannel, AppState.HelloIteration, dbUserId, Context.Guild, Context.Client);
-                    Globals.SetSuspendedUser(ResponseChannel, dbUserId, Context.Guild, Context.Client);
+                    Util.AwardChainKeeper(ResponseChannel, AppState.HelloIteration, dbUserId, Context.Guild, Context.Client);
+                    Util.SetSuspendedUser(ResponseChannel, dbUserId, Context.Guild, Context.Client);
                 }
                 catch (Exception e)
                 {
-                    Globals.LogActivity(Context.Guild.Id, 1, "Failed updating roles after break", "Error: " + e.Message, false, CallingUserId);
+                    Util.LogActivity(Context.Guild.Id, 1, "Failed updating roles after break", "Error: " + e.Message, false, CallingUserId);
                     await ReplyAsync("Failed to update roles");
                 }
 
@@ -89,15 +89,15 @@ namespace BigMoBot.Modules
                                 x.CategoryId = AppState.HelloCategoryId.ToInt64();
                             x.Topic = AppState.HelloTopic;
                         });
-                        AppState.HelloChannelId = await Globals.GetDbChannelId(Context.Guild.Id, NewChannel.Id, NewChannel.Name, 2);
+                        AppState.HelloChannelId = await Util.GetDbChannelId(Context.Guild.Id, NewChannel.Id, NewChannel.Name, 2);
                         AppState.HelloDeleted = false;
                         AppState.LastHelloMessage = DateTime.Now;
                         AppState.LastHelloUserId = 0;
-                        Globals.LogActivity(Context.Guild.Id, 5, "From command", "Iteration: " + AppState.HelloIteration, true, CallingUserId);
+                        Util.LogActivity(Context.Guild.Id, 5, "From command", "Iteration: " + AppState.HelloIteration, true, CallingUserId);
                     }
                     catch (Exception e)
                     {
-                        Globals.LogActivity(Context.Guild.Id, 5, "From command", "Iteration: " + AppState.HelloIteration + " Error: " + e.Message, false, CallingUserId);
+                        Util.LogActivity(Context.Guild.Id, 5, "From command", "Iteration: " + AppState.HelloIteration + " Error: " + e.Message, false, CallingUserId);
                         await ReplyAsync("Operation failed: " + e.Message);
                         throw new Exception("Operation failed: " + e.Message);
                     }

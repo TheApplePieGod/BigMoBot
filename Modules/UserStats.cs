@@ -79,7 +79,7 @@ namespace BigMoBot.Modules
             if (!AppState.EnableMeCommand)
                 throw new Exception("The [Me Command] feature is not enabled");
 
-            int userId = await Globals.GetDbUserId(Context.Guild.Id, Context.User);
+            int userId = await Util.GetDbUserId(Context.Guild.Id, Context.User);
 
             var embed = new EmbedBuilder
             {

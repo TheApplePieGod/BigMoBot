@@ -21,7 +21,7 @@ namespace BigMoBot.Modules
             else
             {
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-                int CallingUserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
+                int CallingUserId = await Util.GetDbUserId(Context.Guild.Id, Context.Message.Author);
                 var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                 if (!AppState.EnableStatisticsTracking)
@@ -32,7 +32,7 @@ namespace BigMoBot.Modules
                 {
                     if (Channel != null)
                     {
-                        int dbChannelId = await Globals.GetDbChannelId(Channel);
+                        int dbChannelId = await Util.GetDbChannelId(Channel);
                         var BlacklistedChannel = await dbContext.ChannelBlacklists.Where(c => c.ChannelId == dbChannelId).FirstOrDefaultAsync();
                         if (BlacklistedChannel != null)
                             await ReplyAsync("Channel <#" + Channel.Id + "> already on the deny list");
@@ -45,11 +45,11 @@ namespace BigMoBot.Modules
                                 dbContext.ChannelBlacklists.Add(NewRow);
                                 await dbContext.SaveChangesAsync();
                                 await ReplyAsync("Successfully blocked channel <#" + Channel.Id + "> from statistics");
-                                Globals.LogActivity(Context.Guild.Id, 8, "", Channel.Name, true, CallingUserId);
+                                Util.LogActivity(Context.Guild.Id, 8, "", Channel.Name, true, CallingUserId);
                             }
                             catch (Exception e)
                             {
-                                Globals.LogActivity(Context.Guild.Id, 8, Channel.Name, e.Message, false, CallingUserId);
+                                Util.LogActivity(Context.Guild.Id, 8, Channel.Name, e.Message, false, CallingUserId);
                                 throw new Exception("Operation failed: " + e.Message);
                             }
                         }
@@ -61,7 +61,7 @@ namespace BigMoBot.Modules
                 {
                     if (Channel != null)
                     {
-                        int dbChannelId = await Globals.GetDbChannelId(Channel);
+                        int dbChannelId = await Util.GetDbChannelId(Channel);
                         var BlacklistedChannel = await dbContext.ChannelBlacklists.Where(c => c.ChannelId == dbChannelId).FirstOrDefaultAsync();
                         if (BlacklistedChannel == null)
                             await ReplyAsync("Channel <#" + Channel.Id + "> is not blocked");
@@ -72,11 +72,11 @@ namespace BigMoBot.Modules
                                 dbContext.ChannelBlacklists.Remove(BlacklistedChannel);
                                 await dbContext.SaveChangesAsync();
                                 await ReplyAsync("Successfully removed channel <#" + Channel.Id + "> from the deny list");
-                                Globals.LogActivity(Context.Guild.Id, 9, "", Channel.Name, true, CallingUserId);
+                                Util.LogActivity(Context.Guild.Id, 9, "", Channel.Name, true, CallingUserId);
                             }
                             catch (Exception e)
                             {
-                                Globals.LogActivity(Context.Guild.Id, 9, Channel.Name, e.Message, false, CallingUserId);
+                                Util.LogActivity(Context.Guild.Id, 9, Channel.Name, e.Message, false, CallingUserId);
                                 throw new Exception("Operation failed: " + e.Message);
                             }
                         }

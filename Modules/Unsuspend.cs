@@ -27,7 +27,7 @@ namespace BigMoBot.Modules
             else
             {
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-                int UserId = await Globals.GetDbUserId(Context.Guild.Id, User);
+                int UserId = await Util.GetDbUserId(Context.Guild.Id, User);
                 var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                 if (AppState.SuspendedRoleId != null && AppState.SuspendedRoleId.Length > 0)
@@ -43,8 +43,8 @@ namespace BigMoBot.Modules
                     await ReplyAsync("<@!" + User.Id + "> has been unsuspended.");
 
                     //todo: log
-                    //int CallingUserId = await Globals.GetDbUserId(Context.Message.Author);
-                    //Globals.LogActivity(2, "", User.Username + " has been unmuted.", true, CallingUserId);
+                    //int CallingUserId = await Util.GetDbUserId(Context.Message.Author);
+                    //Util.LogActivity(2, "", User.Username + " has been unmuted.", true, CallingUserId);
                 }
                 else
                     await ReplyAsync("This feature has not been set up yet");

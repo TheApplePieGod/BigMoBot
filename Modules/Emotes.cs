@@ -22,7 +22,7 @@ namespace BigMoBot.Modules
             if (!AppState.EnableEmotes)
                 throw new Exception("The [Emotes] feature is not enabled");
 
-            int CallingUserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
+            int CallingUserId = await Util.GetDbUserId(Context.Guild.Id, Context.Message.Author);
 
             Name = Name.Trim().ToLower();
             Link = Link.Trim();
@@ -59,11 +59,11 @@ namespace BigMoBot.Modules
                         dbContext.Emotes.Add(NewRow);
                         await dbContext.SaveChangesAsync();
                         await ReplyAsync("Successfully created emote $" + Name + "$");
-                        Globals.LogActivity(Context.Guild.Id, 10, Name, "", true, CallingUserId);
+                        Util.LogActivity(Context.Guild.Id, 10, Name, "", true, CallingUserId);
                     }
                     catch (Exception e)
                     {
-                        Globals.LogActivity(Context.Guild.Id, 10, Name, e.Message, false, CallingUserId);
+                        Util.LogActivity(Context.Guild.Id, 10, Name, e.Message, false, CallingUserId);
                         throw new Exception("Operation failed: " + e.Message);
                     }
                 }
@@ -87,11 +87,11 @@ namespace BigMoBot.Modules
                         dbContext.Emotes.Remove(ExistingEmote);
                         await dbContext.SaveChangesAsync();
                         await ReplyAsync("Successfully removed emote $" + Name + "$");
-                        Globals.LogActivity(Context.Guild.Id, 11, Name, "", true, CallingUserId);
+                        Util.LogActivity(Context.Guild.Id, 11, Name, "", true, CallingUserId);
                     }
                     catch (Exception e)
                     {
-                        Globals.LogActivity(Context.Guild.Id, 11, Name, e.Message, false, CallingUserId);
+                        Util.LogActivity(Context.Guild.Id, 11, Name, e.Message, false, CallingUserId);
                         throw new Exception("Operation failed: " + e.Message);
                     }
                 }         

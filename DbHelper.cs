@@ -107,7 +107,7 @@ namespace BigMoBot
                                 var LastMessage = await HelloChannel.GetMessagesAsync(1).Flatten().FirstOrDefaultAsync();
                                 if (LastMessage != null)
                                 {
-                                    AppState.LastHelloUserId = await Globals.GetDbUserId(NewContext, ClientIdentifier, LastMessage.Author);
+                                    AppState.LastHelloUserId = await Util.GetDbUserId(NewContext, ClientIdentifier, LastMessage.Author);
                                     AppState.LastHelloMessage = LastMessage.Timestamp.DateTime.ToLocalTime();
                                 }
                             }
@@ -116,7 +116,7 @@ namespace BigMoBot
 
                     await NewContext.SaveChangesAsync();
                 }
-                catch (Exception e) { Globals.LogActivity(ClientIdentifier, 1, "Initialize", e.Message, false); throw e; }
+                catch (Exception e) { Util.LogActivity(ClientIdentifier, 1, "Initialize", e.Message, false); throw e; }
 
                 ContextLoaded[ClientIdentifier] = ConnectionString;
                 return NewContext;

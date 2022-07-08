@@ -22,7 +22,7 @@ namespace BigMoBot.Modules
 
         //private async Task HandleStreamCreated(ulong id, AudioInStream stream)
         //{
-        //    var User = await Context.Client.Rest.GetGuildUserAsync(Globals.MohammadServerId, id);
+        //    var User = await Context.Client.Rest.GetGuildUserAsync(Util.MohammadServerId, id);
         //    if (User != null && User.IsBot)
         //        return;
 
@@ -56,7 +56,7 @@ namespace BigMoBot.Modules
         //{
         //    if (id != 0)
         //    {
-        //        var User = await Context.Client.Rest.GetGuildUserAsync(Globals.MohammadServerId, id);
+        //        var User = await Context.Client.Rest.GetGuildUserAsync(Util.MohammadServerId, id);
         //        if (User != null && User.IsBot)
         //            return;
         //    }

@@ -30,7 +30,7 @@ namespace BigMoBot.Modules
                 if (AppState.ResponseChannelId != null && AppState.ResponseChannelId.Length > 0)
                     ResponseChannel = Context.Client.GetChannel(AppState.ResponseChannelId.ToInt64()) as SocketTextChannel;
 
-                AppState.HelloChannelId = await Globals.GetDbChannelId(NewChannel);
+                AppState.HelloChannelId = await Util.GetDbChannelId(NewChannel);
                 AppState.HelloDeleted = false;
                 AppState.HelloTimerNotified = false;
                 AppState.LastHelloUserId = 0;
@@ -39,12 +39,12 @@ namespace BigMoBot.Modules
                 await dbContext.SaveChangesAsync();
                 //await Context.Message.DeleteAsync();
 
-                Globals.SetSuspendedUser(ResponseChannel, 0, Context.Guild, Context.Client);
+                Util.SetSuspendedUser(ResponseChannel, 0, Context.Guild, Context.Client);
 
                 await ReplyAsync("Successfully reset channel to <#" + NewChannel.Id + ">");
 
-                int CallingUserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
-                Globals.LogActivity(Context.Guild.Id, 7, "", "Successfully reset channel to " + NewChannel.Name, true, CallingUserId);
+                int CallingUserId = await Util.GetDbUserId(Context.Guild.Id, Context.Message.Author);
+                Util.LogActivity(Context.Guild.Id, 7, "", "Successfully reset channel to " + NewChannel.Name, true, CallingUserId);
             }
         }
     }
