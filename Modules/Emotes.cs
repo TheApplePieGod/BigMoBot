@@ -17,7 +17,7 @@ namespace BigMoBot.Modules
         {
             var GuildUser = Context.Guild.GetUser(Context.User.Id);
             var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             if (!AppState.EnableEmotes)
                 throw new Exception("The [Emotes] feature is not enabled");
@@ -45,7 +45,7 @@ namespace BigMoBot.Modules
                 if (Name == "check")
                     throw new Exception("Cannot make an emote with this name");
 
-                var ExistingEmote = await dbContext.Emotes.ToAsyncEnumerable().Where(c => c.Name == Name).FirstOrDefaultAsync();
+                var ExistingEmote = await dbContext.Emotes.Where(c => c.Name == Name).FirstOrDefaultAsync();
                 if (ExistingEmote != null)
                     await ReplyAsync("An emote with this name already exists");
                 else
@@ -77,7 +77,7 @@ namespace BigMoBot.Modules
                 if (Name == "")
                     throw new Exception("Name cannot be empty");
 
-                var ExistingEmote = await dbContext.Emotes.ToAsyncEnumerable().Where(c => c.Name == Name).FirstOrDefaultAsync();
+                var ExistingEmote = await dbContext.Emotes.Where(c => c.Name == Name).FirstOrDefaultAsync();
                 if (ExistingEmote == null)
                     await ReplyAsync("The emote $" + Name + "$ does not exist");
                 else
@@ -99,7 +99,7 @@ namespace BigMoBot.Modules
             else if (Operation == "list")
             {
                 string ListString = "";
-                var AllEmotes = await dbContext.Emotes.ToAsyncEnumerable().ToListAsync();
+                var AllEmotes = await dbContext.Emotes.ToListAsync();
 
                 if (AllEmotes.Count == 0)
                 {

@@ -35,7 +35,7 @@ namespace BigMoBot.Modules
             else
             {
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-                var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                 if (!AppState.EnableHelloChain)
                     throw new Exception("The [Hello Chain] feature is not enabled");
@@ -47,7 +47,7 @@ namespace BigMoBot.Modules
 
                 try
                 {
-                    var dbChannel = await dbContext.Channels.ToAsyncEnumerable().Where(c => c.Id == AppState.HelloChannelId).FirstOrDefaultAsync();
+                    var dbChannel = await dbContext.Channels.Where(c => c.Id == AppState.HelloChannelId).FirstOrDefaultAsync();
                     var HelloChannel = Context.Client.GetChannel(dbChannel.DiscordChannelId.ToInt64()) as SocketTextChannel;
                     await HelloChannel.DeleteAsync();
                     dbChannel.Deleted = true;
@@ -61,7 +61,7 @@ namespace BigMoBot.Modules
                 }
 
                 int dbUserId = await Globals.GetDbUserId(Context.Guild.Id, User);
-                var dbUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == dbUserId).FirstOrDefaultAsync();
+                var dbUser = await dbContext.Users.Where(u => u.Id == dbUserId).FirstOrDefaultAsync();
                 dbUser.ChainBreaks = dbUser.ChainBreaks + 1;
 
                 try

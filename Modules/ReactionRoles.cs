@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
+using Microsoft.EntityFrameworkCore;
 
 namespace BigMoBot.Modules
 {
@@ -29,7 +30,7 @@ namespace BigMoBot.Modules
 
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
 
-                var FoundEntry = await dbContext.ReactionRoles.AsAsyncEnumerable().Where(e => e.MessageId == MessageId.ToByteArray()).FirstOrDefaultAsync();
+                var FoundEntry = await dbContext.ReactionRoles.Where(e => e.MessageId == MessageId.ToByteArray()).FirstOrDefaultAsync();
                 if (FoundEntry != null)
                     throw new Exception("Reaction roles have already been set up for this message");
 

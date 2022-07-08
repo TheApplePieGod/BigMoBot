@@ -24,7 +24,7 @@ namespace BigMoBot.Modules
                 throw new Exception("You do not have permission to run that command");
 
             var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             try
             {
@@ -90,7 +90,7 @@ namespace BigMoBot.Modules
                 throw new Exception("You do not have permission to run that command");
 
             var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             switch (Feature)
             {

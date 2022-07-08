@@ -31,7 +31,7 @@ namespace BigMoBot.Modules
         public static async Task<ReportReturn> ReportRange(ulong ClientIdentifier, string Bottom, string Top)
         {
             var dbContext = await DbHelper.GetDbContext(ClientIdentifier);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             if (!AppState.EnableStatisticsTracking)
                 throw new Exception("The [Statistics Tracking] feature is not enabled");

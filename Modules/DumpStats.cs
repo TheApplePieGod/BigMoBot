@@ -24,7 +24,7 @@ namespace BigMoBot.Modules
         public async Task<StatsReturn> GetStatsFromRange(string Bottom, string Top)
         {
             var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             if (!AppState.EnableStatisticsTracking)
                 throw new Exception("The [Statistics Tracking] feature is not enabled");

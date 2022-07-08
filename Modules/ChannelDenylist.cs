@@ -22,7 +22,7 @@ namespace BigMoBot.Modules
             {
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
                 int CallingUserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
-                var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                 if (!AppState.EnableStatisticsTracking)
                     throw new Exception("The [Statistics Tracking] feature is not enabled");
@@ -33,7 +33,7 @@ namespace BigMoBot.Modules
                     if (Channel != null)
                     {
                         int dbChannelId = await Globals.GetDbChannelId(Channel);
-                        var BlacklistedChannel = await dbContext.ChannelBlacklists.ToAsyncEnumerable().Where(c => c.ChannelId == dbChannelId).FirstOrDefaultAsync();
+                        var BlacklistedChannel = await dbContext.ChannelBlacklists.Where(c => c.ChannelId == dbChannelId).FirstOrDefaultAsync();
                         if (BlacklistedChannel != null)
                             await ReplyAsync("Channel <#" + Channel.Id + "> already on the deny list");
                         else
@@ -62,7 +62,7 @@ namespace BigMoBot.Modules
                     if (Channel != null)
                     {
                         int dbChannelId = await Globals.GetDbChannelId(Channel);
-                        var BlacklistedChannel = await dbContext.ChannelBlacklists.ToAsyncEnumerable().Where(c => c.ChannelId == dbChannelId).FirstOrDefaultAsync();
+                        var BlacklistedChannel = await dbContext.ChannelBlacklists.Where(c => c.ChannelId == dbChannelId).FirstOrDefaultAsync();
                         if (BlacklistedChannel == null)
                             await ReplyAsync("Channel <#" + Channel.Id + "> is not blocked");
                         else
@@ -87,8 +87,8 @@ namespace BigMoBot.Modules
                 else if (Operation == "list")
                 {
                     string ListString = "";
-                    var Blacklist = await dbContext.ChannelBlacklists.AsAsyncEnumerable().ToListAsync();
-                    var AllChannels = await dbContext.Channels.ToAsyncEnumerable().Where(c => Blacklist.Exists(b => b.ChannelId == c.Id)).ToListAsync();
+                    var Blacklist = await dbContext.ChannelBlacklists.ToListAsync();
+                    var AllChannels = await dbContext.Channels.Where(c => Blacklist.Exists(b => b.ChannelId == c.Id)).ToListAsync();
 
                     foreach (Database.ChannelBlacklist Item in Blacklist)
                     {

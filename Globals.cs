@@ -56,7 +56,7 @@ namespace BigMoBot
 
         public static async Task<int> GetDbUserId(Database.DatabaseContext dbContext, ulong ClientIdentifier, IUser User)
         {
-            var DbUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.DiscordUserId.ToInt64() == User.Id).FirstOrDefaultAsync();
+            var DbUser = await dbContext.Users.Where(u => u.DiscordUserId.ToInt64() == User.Id).FirstOrDefaultAsync();
             if (DbUser == null)
             {
                 Database.User NewUser = new Database.User();
@@ -81,7 +81,7 @@ namespace BigMoBot
         {
             var dbContext = await DbHelper.GetDbContext(Channel.Guild.Id);
 
-            var DbChannel = await dbContext.Channels.ToAsyncEnumerable().Where(u => u.DiscordChannelId.ToInt64() == Channel.Id).FirstOrDefaultAsync();
+            var DbChannel = await dbContext.Channels.Where(u => u.DiscordChannelId.ToInt64() == Channel.Id).FirstOrDefaultAsync();
             if (DbChannel == null)
             {
                 Database.Channel NewRow = new Database.Channel();
@@ -111,7 +111,7 @@ namespace BigMoBot
         {
             Database.DatabaseContext dbContext = await DbHelper.GetDbContext(ClientIdentifier);
 
-            var DbChannel = await dbContext.Channels.ToAsyncEnumerable().Where(u => u.DiscordChannelId.ToInt64() == ChannelId).FirstOrDefaultAsync();
+            var DbChannel = await dbContext.Channels.Where(u => u.DiscordChannelId.ToInt64() == ChannelId).FirstOrDefaultAsync();
             if (DbChannel == null)
             {
                 Database.Channel NewRow = new Database.Channel();
@@ -140,7 +140,7 @@ namespace BigMoBot
         public static async void AwardChainKeeper(SocketTextChannel ResponseChannel, int Iteration, int BreakerUserId, SocketGuild Guild, DiscordSocketClient Client) //todo: log
         {
             var dbContext = await DbHelper.GetDbContext(Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
             var MessageCounts = await dbContext.HelloMessageCountModel.FromSqlRaw(@"select * from udf_GetHelloMessageCount(@iteration, @alliterations, @userid, @allusers) order by NumMessages desc",
                     new SqlParameter("@iteration", Iteration),
                     new SqlParameter("@alliterations", false),
@@ -160,7 +160,7 @@ namespace BigMoBot
                 {
                     bool RoleEnabled = AppState.ChainKeeperRoleId != null && AppState.ChainKeeperRoleId.Length > 0;
 
-                    var RemovingdbUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == AppState.KeeperUserId).FirstOrDefaultAsync();
+                    var RemovingdbUser = await dbContext.Users.Where(u => u.Id == AppState.KeeperUserId).FirstOrDefaultAsync();
                     if (RemovingdbUser != null)
                     {
                         if (RoleEnabled)
@@ -172,7 +172,7 @@ namespace BigMoBot
                         }
                     }
 
-                    var dbUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == AwardingId).FirstOrDefaultAsync();
+                    var dbUser = await dbContext.Users.Where(u => u.Id == AwardingId).FirstOrDefaultAsync();
                     if (dbUser != null)
                     {
                         if (RoleEnabled)
@@ -197,7 +197,7 @@ namespace BigMoBot
         public static async void SetSuspendedUser(SocketTextChannel ResponseChannel, int NewUserId, SocketGuild Guild, DiscordSocketClient Client) //todo: log
         {
             var dbContext = await DbHelper.GetDbContext(Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             if (AppState.SuspendedUserId == NewUserId)
                 return;
@@ -208,7 +208,7 @@ namespace BigMoBot
                 var SuspendedRole = Guild.GetRole(AppState.SuspendedRoleId.ToInt64());
                 if (AppState.SuspendedUserId != 0)
                 {
-                    var RemovingdbUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == AppState.SuspendedUserId).FirstOrDefaultAsync();
+                    var RemovingdbUser = await dbContext.Users.Where(u => u.Id == AppState.SuspendedUserId).FirstOrDefaultAsync();
                     if (RemovingdbUser != null)
                     {
                         var User = await Client.Rest.GetGuildUserAsync(Guild.Id, RemovingdbUser.DiscordUserId.ToInt64());
@@ -219,7 +219,7 @@ namespace BigMoBot
 
                 if (NewUserId != 0)
                 {
-                    var dbUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == NewUserId).FirstOrDefaultAsync();
+                    var dbUser = await dbContext.Users.Where(u => u.Id == NewUserId).FirstOrDefaultAsync();
                     if (dbUser != null)
                     {
                         var User = await Client.Rest.GetGuildUserAsync(Guild.Id, dbUser.DiscordUserId.ToInt64());

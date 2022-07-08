@@ -28,7 +28,7 @@ namespace BigMoBot.Modules
             {
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
                 int UserId = await Globals.GetDbUserId(Context.Guild.Id, User);
-                var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                 if (AppState.SuspendedRoleId != null && AppState.SuspendedRoleId.Length > 0)
                 {

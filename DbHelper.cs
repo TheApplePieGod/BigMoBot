@@ -34,7 +34,7 @@ namespace BigMoBot
                 using (StreamReader reader = new StreamReader(DbStringFile))
                     ConnectionString = reader.ReadToEnd().Trim();
 #else
-                ConnectionString = Environment.GetEnvironmentVariable("MYSQL_STRING");
+                ConnectionString = Environment.GetEnvironmentVariable("SQL_STRING");
 #endif
 
                 ConnectionString = ConnectionString.Replace("BigMoBot", "BigMoBot_" + ClientIdentifier);
@@ -60,7 +60,7 @@ namespace BigMoBot
                         throw result.Error;
                 }
 
-                var AppState = await NewContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                var AppState = await NewContext.AppStates.FirstOrDefaultAsync();
                 if (AppState == null) // insert default value
                 {
                     AppState = new Database.AppState
@@ -98,7 +98,7 @@ namespace BigMoBot
 
                     if (AppState.EnableHelloChain && !AppState.HelloDeleted.Value && AppState.HelloChannelId != 0)
                     {
-                        var Channel = await NewContext.Channels.ToAsyncEnumerable().Where(c => c.Id == AppState.HelloChannelId).FirstOrDefaultAsync();
+                        var Channel = await NewContext.Channels.Where(c => c.Id == AppState.HelloChannelId).FirstOrDefaultAsync();
                         if (Channel != null)
                         {
                             var HelloChannel = CommandHandler._client.GetChannel(Channel.DiscordChannelId.ToInt64()) as SocketTextChannel;

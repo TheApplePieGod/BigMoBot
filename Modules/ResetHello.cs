@@ -21,7 +21,7 @@ namespace BigMoBot.Modules
             else
             {
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-                var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                 if (!AppState.EnableHelloChain)
                     throw new Exception("The [Hello Chain] feature is not enabled");

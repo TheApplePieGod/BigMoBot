@@ -29,12 +29,12 @@ namespace BigMoBot.Modules
                 if (Minutes > 0)
                 {
                     var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-                    var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                    var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                     if (AppState.SuppressedRoleId != null && AppState.SuppressedRoleId.Length > 0)
                     {
                         int UserId = await Globals.GetDbUserId(Context.Guild.Id, User);
-                        var SuppressedUserRow = await dbContext.SupressedUsers.ToAsyncEnumerable().Where(u => u.UserId == UserId).FirstOrDefaultAsync();
+                        var SuppressedUserRow = await dbContext.SupressedUsers.Where(u => u.UserId == UserId).FirstOrDefaultAsync();
 
                         if (SuppressedUserRow == null)
                         {

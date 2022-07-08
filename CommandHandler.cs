@@ -60,7 +60,7 @@ namespace BigMoBot
 
             var dbContext = await DbHelper.GetDbContext(GuildChannel.Guild.Id);
 
-            var FoundMessage = await dbContext.ReactionRoles.AsAsyncEnumerable().Where(e => e.MessageId.ToInt64() == Message.Id).FirstOrDefaultAsync();
+            var FoundMessage = await dbContext.ReactionRoles.Where(e => e.MessageId.ToInt64() == Message.Id).FirstOrDefaultAsync();
             if (FoundMessage != null)
             {
                 var Emote = Reaction.Emote as Emote;
@@ -68,7 +68,7 @@ namespace BigMoBot
                 if (Emote != null)
                     EmoteName = "<:" + Emote.Name + ":" + Emote.Id + ">";
 
-                var FoundEmote = await dbContext.ReactionRoleEmotes.AsAsyncEnumerable().Where(e => e.ReactionRoleId == FoundMessage.Id && e.Emote == EmoteName).FirstOrDefaultAsync();
+                var FoundEmote = await dbContext.ReactionRoleEmotes.Where(e => e.ReactionRoleId == FoundMessage.Id && e.Emote == EmoteName).FirstOrDefaultAsync();
                 if (FoundEmote != null)
                 {
                     var Role = GuildChannel.Guild.GetRole(FoundEmote.RoleId.ToInt64());
@@ -90,7 +90,7 @@ namespace BigMoBot
 
             var dbContext = await DbHelper.GetDbContext(GuildChannel.Guild.Id);
 
-            var FoundMessage = await dbContext.ReactionRoles.AsAsyncEnumerable().Where(e => e.MessageId.ToInt64() == Message.Id).FirstOrDefaultAsync();
+            var FoundMessage = await dbContext.ReactionRoles.Where(e => e.MessageId.ToInt64() == Message.Id).FirstOrDefaultAsync();
             if (FoundMessage != null)
             {
                 var Emote = Reaction.Emote as Emote;
@@ -98,7 +98,7 @@ namespace BigMoBot
                 if (Emote != null)
                     EmoteName = "<:" + Emote.Name + ":" + Emote.Id + ">";
 
-                var FoundEmote = await dbContext.ReactionRoleEmotes.AsAsyncEnumerable().Where(e => e.ReactionRoleId == FoundMessage.Id && e.Emote == EmoteName).FirstOrDefaultAsync();
+                var FoundEmote = await dbContext.ReactionRoleEmotes.Where(e => e.ReactionRoleId == FoundMessage.Id && e.Emote == EmoteName).FirstOrDefaultAsync();
                 if (FoundEmote != null)
                 {
                     var Role = GuildChannel.Guild.GetRole(FoundEmote.RoleId.ToInt64());
@@ -117,7 +117,7 @@ namespace BigMoBot
 
             var dbContext = await DbHelper.GetDbContext(GuildChannel.Guild.Id);
 
-            var FoundMessage = await dbContext.ReactionRoles.AsAsyncEnumerable().Where(e => e.MessageId.ToInt64() == Message.Id).FirstOrDefaultAsync();
+            var FoundMessage = await dbContext.ReactionRoles.Where(e => e.MessageId.ToInt64() == Message.Id).FirstOrDefaultAsync();
             if (FoundMessage != null)
             {
                 FoundMessage.Deleted = true;
@@ -128,12 +128,12 @@ namespace BigMoBot
         public async Task OnUserJoined(SocketGuildUser User)
         {
             var dbContext = await DbHelper.GetDbContext(User.Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             if (AppState.JoinMuteMinutes > 0 && AppState.SuppressedRoleId != null && AppState.SuppressedRoleId.Length > 0)
             {
                 int UserId = await Globals.GetDbUserId(User.Guild.Id, User);
-                var SuppressedUserRow = await dbContext.SupressedUsers.AsAsyncEnumerable().Where(u => u.UserId == UserId).FirstOrDefaultAsync();
+                var SuppressedUserRow = await dbContext.SupressedUsers.Where(u => u.UserId == UserId).FirstOrDefaultAsync();
 
                 if (SuppressedUserRow == null)
                 {
@@ -184,7 +184,7 @@ namespace BigMoBot
             {
                 var dbContext = await DbHelper.GetDbContext(entry.Key);
                 var AllChannels = _client.GetGuild(entry.Key).Channels;
-                var AllDbChannels = await dbContext.Channels.AsAsyncEnumerable().ToListAsync();
+                var AllDbChannels = await dbContext.Channels.ToListAsync();
                 foreach (Database.Channel Channel in AllDbChannels)
                 {
                     if (!Channel.Deleted)
@@ -205,7 +205,7 @@ namespace BigMoBot
                 try
                 {
                     var dbContext = await DbHelper.GetDbContext(entry.Key);
-                    var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                    var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                     if (AppState.EnableHelloChain && !AppState.HelloDeleted.Value && AppState.HelloChannelId != 0)
                     {
@@ -220,7 +220,7 @@ namespace BigMoBot
                         {
                             try
                             {
-                                var dbChannel = await dbContext.Channels.ToAsyncEnumerable().Where(c => c.Id == AppState.HelloChannelId).FirstOrDefaultAsync();
+                                var dbChannel = await dbContext.Channels.Where(c => c.Id == AppState.HelloChannelId).FirstOrDefaultAsync();
 
                                 DeleteHelloChannel(ResponseChannel, "A hello has not been chained for more than a day. The channel has been deleted.", dbChannel.DiscordChannelId.ToInt64());
 
@@ -256,7 +256,7 @@ namespace BigMoBot
                 try
                 {
                     var dbContext = await DbHelper.GetDbContext(entry.Key);
-                    var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                    var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
                     if (AppState.EnableStatisticsTracking)
                     {
@@ -272,7 +272,7 @@ namespace BigMoBot
                                         DateTime CurrentWeekDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
                                         int UserId = await Globals.GetDbUserId(entry.Key, User);
                                         int ChannelId = await Globals.GetDbChannelId(Channel);
-                                        var VoiceStatisticsRow = await dbContext.VoiceStatistics.ToAsyncEnumerable().Where(u => u.UserId == UserId && u.ChannelId == ChannelId && u.TimePeriod == CurrentWeekDate).FirstOrDefaultAsync();
+                                        var VoiceStatisticsRow = await dbContext.VoiceStatistics.Where(u => u.UserId == UserId && u.ChannelId == ChannelId && u.TimePeriod == CurrentWeekDate).FirstOrDefaultAsync();
 
                                         if (VoiceStatisticsRow == null)
                                         {
@@ -295,7 +295,7 @@ namespace BigMoBot
                         }
                     }
 
-                    var SuppressedUsers = await dbContext.SupressedUsers.AsAsyncEnumerable().ToListAsync();
+                    var SuppressedUsers = await dbContext.SupressedUsers.ToListAsync();
                     if (SuppressedUsers.Count > 0 && AppState.SuppressedRoleId != null && AppState.SuppressedRoleId.Length > 0)
                     {
                         var SuppressRole = _client.GetGuild(entry.Key).GetRole(AppState.SuppressedRoleId.ToInt64());
@@ -304,7 +304,7 @@ namespace BigMoBot
                             double SecondsDifference = (DateTime.Now - SuppressedUser.TimeStarted.Value).TotalSeconds;
                             if (SecondsDifference >= SuppressedUser.MaxTimeSeconds)
                             {
-                                var User = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == SuppressedUser.UserId).FirstOrDefaultAsync(); // should exist at this point
+                                var User = await dbContext.Users.Where(u => u.Id == SuppressedUser.UserId).FirstOrDefaultAsync(); // should exist at this point
                                 try
                                 {
                                     ulong DiscordId = User.DiscordUserId.ToInt64();
@@ -348,7 +348,7 @@ namespace BigMoBot
                 var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
                 int UserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
                 int ChannelId = await Globals.GetDbChannelId(Context.Guild.GetChannel(Context.Channel.Id)); // context.channel should always be in a guild here
-                var MessageStatisticsRow = await dbContext.MessageStatistics.ToAsyncEnumerable().Where(u => u.UserId == UserId && u.ChannelId == ChannelId && u.TimePeriod == CurrentWeekDate).FirstOrDefaultAsync();
+                var MessageStatisticsRow = await dbContext.MessageStatistics.Where(u => u.UserId == UserId && u.ChannelId == ChannelId && u.TimePeriod == CurrentWeekDate).FirstOrDefaultAsync();
 
                 if (MessageStatisticsRow == null)
                 {
@@ -378,7 +378,7 @@ namespace BigMoBot
             {
                 if (State.HelloChannelId != 0)
                 {
-                    var dbChannel = await dbContext.Channels.ToAsyncEnumerable().Where(c => c.Id == State.HelloChannelId).FirstOrDefaultAsync(); // todo: change back to id instead of channel reference for performance?
+                    var dbChannel = await dbContext.Channels.Where(c => c.Id == State.HelloChannelId).FirstOrDefaultAsync(); // todo: change back to id instead of channel reference for performance?
                     if (Context.Message.Channel.Id == dbChannel.DiscordChannelId.ToInt64())
                     {
                         int UserId = await Globals.GetDbUserId(Context.Guild.Id, Context.Message.Author);
@@ -403,10 +403,10 @@ namespace BigMoBot
                         {
                             string FormattedMessage = new string(Context.Message.Content.ToLower().Where(c => char.IsLetterOrDigit(c)).ToArray());
                             string MessageWithSpaces = new string(Context.Message.Content.ToLower().Where(c => char.IsLetterOrDigit(c) || c == ' ').ToArray()).Trim();
-                            var FoundGreeting = await dbContext.Greetings.ToAsyncEnumerable().Where(g => g.Iteration == State.HelloIteration && g.Greeting1.Replace(" ", "") == FormattedMessage).FirstOrDefaultAsync();
+                            var FoundGreeting = await dbContext.Greetings.Where(g => g.Iteration == State.HelloIteration && g.Greeting1.Replace(" ", "") == FormattedMessage).FirstOrDefaultAsync();
                             if (FoundGreeting != null)
                             {
-                                var CopiedUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == FoundGreeting.UserId).FirstOrDefaultAsync(); // should exist
+                                var CopiedUser = await dbContext.Users.Where(u => u.Id == FoundGreeting.UserId).FirstOrDefaultAsync(); // should exist
                                 Break = true;
                                 Reason = "has copied <@!" + CopiedUser.DiscordUserId.ToInt64() + "> by saying \"" + Context.Message.Content + "\"";
                             }
@@ -425,7 +425,7 @@ namespace BigMoBot
 
                         if (Break)
                         {
-                            var DbUser = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == UserId).FirstOrDefaultAsync();
+                            var DbUser = await dbContext.Users.Where(u => u.Id == UserId).FirstOrDefaultAsync();
                             var BreakerUser = await Context.Client.Rest.GetGuildUserAsync(Context.Guild.Id, DbUser.DiscordUserId.ToInt64());
                             var ResponseChannel = Context.Guild.DefaultChannel;
                             if (State.ResponseChannelId != null && State.ResponseChannelId.Length > 0)
@@ -527,7 +527,7 @@ namespace BigMoBot
                     if (!(msg.Channel is SocketDMChannel))
                     {
                         var dbContext = await DbHelper.GetDbContext(context.Guild.Id);
-                        var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+                        var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
                         if (AppState.EnableStatisticsTracking)
                             await UpdateSentMessages(context);
                         if (AppState.EnableHelloChain && !AppState.HelloDeleted.Value)
@@ -542,7 +542,7 @@ namespace BigMoBot
                         {
                             if (Message.Count(c => c == '$') > 1) // possibly contains emotes
                             {
-                                var AllEmotes = await dbContext.Emotes.AsAsyncEnumerable().ToListAsync();
+                                var AllEmotes = await dbContext.Emotes.ToListAsync();
                                 var Splits = Message.Split('$');
                                 for (int i = 1; i < Splits.Length - 1; i++) // skip the first and last splits
                                 {
@@ -581,7 +581,7 @@ namespace BigMoBot
                                             {
                                                 Message = Message.Replace(" ", "");
                                                 string CheckingGreeting = new string(Message.Substring(6, Message.Length - 6).ToLower().Where(c => char.IsLetterOrDigit(c)).ToArray());
-                                                var FoundGreeting = await dbContext.Greetings.ToAsyncEnumerable().Where(g => g.Iteration == AppState.HelloIteration && g.Greeting1.Replace(" ", "") == CheckingGreeting).FirstOrDefaultAsync();
+                                                var FoundGreeting = await dbContext.Greetings.Where(g => g.Iteration == AppState.HelloIteration && g.Greeting1.Replace(" ", "") == CheckingGreeting).FirstOrDefaultAsync();
                                                 if (FoundGreeting != null)
                                                     await context.Channel.SendMessageAsync("That greeting has been used");
                                                 else

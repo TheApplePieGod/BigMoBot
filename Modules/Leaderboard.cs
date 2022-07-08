@@ -19,7 +19,7 @@ namespace BigMoBot.Modules
         public async Task Task1()
         {
             var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             if (!AppState.EnableHelloChain)
                 throw new Exception("The [Hello Chain] feature is not enabled");
@@ -40,7 +40,7 @@ namespace BigMoBot.Modules
                 string LeaderboardString = "";
                 for (int i = 0; i < Math.Min(10, Results.Length); i++)
                 {
-                    var User = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == Results[i].UserId).FirstOrDefaultAsync();
+                    var User = await dbContext.Users.Where(u => u.Id == Results[i].UserId).FirstOrDefaultAsync();
                     if (User != null)
                         LeaderboardString += (i + 1) + ". " + User.DiscordUserName + ": **" + Results[i].NumMessages + "**\n";
                 }
@@ -59,7 +59,7 @@ namespace BigMoBot.Modules
         public async Task Task2()
         {
             var dbContext = await DbHelper.GetDbContext(Context.Guild.Id);
-            var AppState = await dbContext.AppStates.AsAsyncEnumerable().FirstOrDefaultAsync();
+            var AppState = await dbContext.AppStates.FirstOrDefaultAsync();
 
             if (!AppState.EnableHelloChain)
                 throw new Exception("The [Hello Chain] feature is not enabled");
@@ -78,7 +78,7 @@ namespace BigMoBot.Modules
                 string LeaderboardString = "";
                 for (int i = 0; i < Math.Min(5, Results.Length); i++)
                 {
-                    var User = await dbContext.Users.ToAsyncEnumerable().Where(u => u.Id == Results[i].UserId).FirstOrDefaultAsync();
+                    var User = await dbContext.Users.Where(u => u.Id == Results[i].UserId).FirstOrDefaultAsync();
                     if (User != null)
                         LeaderboardString += (i + 1) + ". " + User.DiscordUserName + ": **" + Results[i].NumMessages + "**\n";
                 }
